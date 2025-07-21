@@ -3,6 +3,7 @@
 Kombiniertes Skript zum Trainieren und Evaluieren eines xTB-ähnlichen
 Repulsionspotenzials. Angepasst an eine HDF5-Datei mit
 'iteration_X/training' und 'iteration_X/test' Struktur.
+FÜR MEHRERE CV-ITERATIONEN IN EINER SCHLEIFE.
 """
 import os
 import re
@@ -26,8 +27,6 @@ from tbmalt.physics.dftb.feeds import (
 from tbmalt.ml.loss_function import mse_loss
 from tbmalt.common.exceptions import ConvergenceError
 
-# Annahme: new_feeds_simon.py befindet sich im selben Verzeichnis oder im Python-Pfad
-# Falls nicht, passe den Import entsprechend an.
 from new_feeds_simon import xTBRepulsive, pairwise_repulsive
 
 
@@ -39,19 +38,15 @@ Tensor = torch.Tensor
 DEVICE = torch.device('cpu')
 
 # --- Dateipfade ---
-# ACHTUNG: Pfad zur HDF5-Datei anpassen!
 DATASET_PATH = 'ani_kfold_dataset_with_formation_energies.h5'
 SKF_FILE = 'mio.h5'
-CACHE_FILE = 'permanent_calculation_cache_xTB_training.pkl'
 
 # --- Modellparameter ---
 ORBITAL_BASIS = {1: [0], 6: [0, 1], 7: [0, 1], 8: [0, 1]}
 SPECIES = [1, 6, 7, 8]
 ATOM_MAP = {'H': 1, 'C': 6, 'N': 7, 'O': 8}
 
-# --- Trainings- und Test-Konfiguration ---
-# NEU: Wähle aus, welche Iteration der Kreuzvalidierung genutzt wird
-CV_ITERATION = 0
+# --- Trainings-Konfiguration ---
 NUMBER_OF_EPOCHS = 100
 LEARNING_RATE = 0.01
 
@@ -62,7 +57,6 @@ LEARNING_RATE = 0.01
 
 def load_data_from_cv_iteration(file_path: str, iteration_num: int, dataset_type: str) -> tuple:
     """
-    KORRIGIERTE FUNKTION:
     Lädt Daten aus einem spezifischen Trainings- oder Test-Split einer Iteration.
     dataset_type muss 'training' oder 'test' sein.
     """
@@ -79,18 +73,15 @@ def load_data_from_cv_iteration(file_path: str, iteration_num: int, dataset_type
 
             data_group = f[path_in_h5]
             for molecule_name, molecule_group in data_group.items():
-                # NEU: Überspringe das Molekül "O2"
                 if molecule_name == 'O2':
                     print(f"Hinweis: Molekül '{molecule_name}' wird explizit übersprungen.")
                     continue
                 
                 if all(k in molecule_group for k in ['species', 'coordinates', 'formation_energies']):
                     all_molecule_names.append(molecule_name)
-                    # Annahme: 'species' in HDF5 sind als Bytes gespeichert
                     species_symbols = [s.decode('utf-8') for s in molecule_group['species'][()]]
                     all_species.append([ATOM_MAP[symbol] for symbol in species_symbols])
                     all_coordinates.append(molecule_group['coordinates'][()])
-                    # 'energies' aus HDF5 werden als 'formation_energies' interpretiert
                     all_formation_energies.append(molecule_group['formation_energies'][()])
                 else:
                     print(f"Warnung: Gruppe '{molecule_name}' in '{path_in_h5}' übersprungen (fehlende Datasets).")
@@ -110,7 +101,7 @@ def load_or_calculate_dftb_energies(molecule_names, atomic_numbers_list, coordin
     if os.path.exists(cache_file):
         with open(cache_file, 'rb') as f: data = pickle.load(f)
         if data.get('status') == 'complete':
-            print("\nLade finale DFTB-Ergebnisse für Trainings-Set direkt aus dem Cache.")
+            print(f"\nLade finale DFTB-Ergebnisse für Trainings-Set aus '{cache_file}'.")
             return data['total_energies'], data['geometries']
 
     print("\nBeginne rechenintensive DFTB-Energie-Berechnung für das Trainings-Set.")
@@ -178,7 +169,7 @@ def calculate_formation_energies(geometries, electronic_energies, chemical_poten
     return torch.stack(predicted_energies)
 
 
-def plot_loss_vs_epochs(loss_history: List[float], filename='loss_history_combined.png'):
+def plot_loss_vs_epochs(loss_history: List[float], filename: str):
     """Erstellt und speichert einen Plot des Trainings-Loss über die Epochen."""
     plt.figure(figsize=(10, 6))
     plt.plot(loss_history, label='MSE Loss', marker='o')
@@ -190,7 +181,7 @@ def plot_loss_vs_epochs(loss_history: List[float], filename='loss_history_combin
     print(f"\nLoss-Verlauf gespeichert in '{filename}'")
 
 
-def plot_test_results(target_flat, predicted_flat, labels_flat, fold_num, filename='test_predictions_vs_targets.png'):
+def plot_test_results(target_flat, predicted_flat, labels_flat, fold_num: int, filename: str):
     """Erstellt einen Scatter-Plot der Testergebnisse (Vorhersage vs. Wahrheit)."""
     plt.figure(figsize=(10, 8))
     unique_labels = sorted(list(set(labels_flat)))
@@ -216,29 +207,29 @@ def plot_test_results(target_flat, predicted_flat, labels_flat, fold_num, filena
     plt.close()
     print(f"Test-Vorhersage-Plot gespeichert in '{filename}'")
 
+
 # =============================================================================
 # --- 3. Hauptskript (main) ---
 # =============================================================================
 
-def main():
-    """Hauptfunktion zur Ausführung des gesamten Train- und Test-Workflows."""
+def main(cv_iteration_index: int):
+    """Hauptfunktion zur Ausführung des gesamten Train- und Test-Workflows für eine CV-Iteration."""
     
     # -------------------------------------------------------------------------
     # --- A. DATENVORBEREITUNG ---
     # -------------------------------------------------------------------------
     
-    # --- Trainings- und Testdaten laden mit der korrigierten Funktion ---
+    # --- Trainings- und Testdaten laden ---
     train_names, train_species, train_coords, train_energies_list = load_data_from_cv_iteration(
-        DATASET_PATH, CV_ITERATION, 'training')
+        DATASET_PATH, cv_iteration_index, 'training')
     if not train_names: return
 
     test_names, test_species, test_coords, test_energies_list = load_data_from_cv_iteration(
-        DATASET_PATH, CV_ITERATION, 'test')
+        DATASET_PATH, cv_iteration_index, 'test')
     if not test_names: return
 
     # --- DFTB-Baseline für Trainingsdaten berechnen/laden ---
-    # Der Cache-Dateiname enthält jetzt die Iterationsnummer, um Konflikte zu vermeiden
-    cache_file_for_iteration = f'dftb_cache_iter_{CV_ITERATION}.pkl'
+    cache_file_for_iteration = f'dftb_cache_iter_{cv_iteration_index}.pkl'
     train_elec_energies_flat, train_geometries_flat = load_or_calculate_dftb_energies(
         train_names, train_species, train_coords, cache_file_for_iteration)
 
@@ -312,12 +303,12 @@ def main():
     print("\n--- Training abgeschlossen ---")
     final_params_str = ", ".join([f"{v.item():.6f}" for v in trainable_params])
     print(f"Finale trainierte Parameter: [{final_params_str}]")
-    plot_loss_vs_epochs(loss_history)
+    plot_loss_vs_epochs(loss_history, filename=f'loss_history_iter_{cv_iteration_index}.png')
 
     # -------------------------------------------------------------------------
     # --- C. MODELLEVALUATION ---
     # -------------------------------------------------------------------------
-    print("\n" + "="*50 + f"\n--- C. MODELLEVALUATION AUF TEST-SET (ITERATION {CV_ITERATION}) ---\n" + "="*50)
+    print("\n" + "="*50 + f"\n--- C. MODELLEVALUATION AUF TEST-SET (ITERATION {cv_iteration_index}) ---\n" + "="*50)
     
     with torch.no_grad():
         print("\nBerechne elektronische Energien für das Test-Set...")
@@ -361,12 +352,26 @@ def main():
         
         print("\n" + "="*25 + "\n      FINALE TESTERGEBNISSE\n" + "="*25)
         print(f"Anzahl erfolgreicher Test-Konformationen: {test_predicted_energies.numel()}")
-        print(f"MSE auf Test-Set (iteration_{CV_ITERATION}): {mse.item():.8f}")
-        print(f"RMSE auf Test-Set (iteration_{CV_ITERATION}): {rmse.item():.6f} Hartree")
-        print(f"RMSE auf Test-Set (iteration_{CV_ITERATION}): {rmse.item() * 627.5:.2f} kcal/mol")
+        print(f"MSE auf Test-Set (iteration_{cv_iteration_index}): {mse.item():.8f}")
+        print(f"RMSE auf Test-Set (iteration_{cv_iteration_index}): {rmse.item():.6f} Hartree")
+        print(f"RMSE auf Test-Set (iteration_{cv_iteration_index}): {rmse.item() * 627.5:.2f} kcal/mol")
         print("="*25)
         
-        plot_test_results(test_target_energies_flat, test_predicted_energies, test_labels_flat, CV_ITERATION)
+        plot_test_results(
+            test_target_energies_flat,
+            test_predicted_energies,
+            test_labels_flat,
+            cv_iteration_index,
+            filename=f'test_predictions_vs_targets_iter_{cv_iteration_index}.png'
+        )
+
+# =============================================================================
+# --- 4. Haupt-Ausführungsblock ---
+# =============================================================================
 
 if __name__ == "__main__":
-    main()
+    
+    for i in range(5):
+        print(f"\n{'='*25}\n   STARTING CV ITERATION {i}\n{'='*25}\n")
+        main(cv_iteration_index=i)
+        print(f"\n{'='*25}\n   FINISHED CV ITERATION {i}\n{'='*25}\n")
