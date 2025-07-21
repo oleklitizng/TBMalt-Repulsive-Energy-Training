@@ -134,87 +134,77 @@ class PTBPRepulsive(Feed):
         return results
     
 class DFTBGammaRepulsive(Feed):
-     
-    """Repulsive in form of the DFTB-Gamma.
+    """Repulsive in form of the DFTB-Gamma."""
 
-    
-
-    Arguments:
-        coefficients: List containing import parameter
-            c[0] := Z_A^eff
-            c[1] := Z_B^eff
-            c[2] := α_A
-            c[3] := α_B
-        cutoff: Cutoff radius for the repulsive beyond which interactions
-            are assumed to be zero.
-    """
-
-    def __init__(
-            self, coefficients: Parameter, cutoff: Tensor):
-
+    def __init__(self, coefficients: Parameter, cutoff: Tensor):
         super().__init__()
         self.coefficients = coefficients
         self.cutoff = cutoff
 
-    def forward(self, distances: Tensor) -> Tensor:
-        """Evaluate the repulsive interaction at the specified distance(s).
-
-        Arguments:
-            distances: Distance(s) at which the repulsive term is to be
-                evaluated.
-
-        Returns:
-            repulsive: Repulsive interaction energy as evaluated at the
-                specified distances.
-        """
-        results = torch.zeros_like(distances)
-        c = self.coefficients
-        z1 = c[0]
-        z2 = c[1]
-        a1 = c[2]
-        a2 = c[3]
-        mask = distances < self.cutoff
-
-        if a1 == a2:
-            results[mask] = self._equal_gamma(distances[mask], a1)
-        
-        else:
-            results[mask] = self._unequal_gamma(distances[mask], a1, a2)
-
-
-        return results * z1 * z2
-    
     def _Gamma(self, a, b, R):
+        # Diese Funktion bleibt unverändert
         zaehler1 = b**4 * a
         nenner1 = 2 * (a**2 - b**2)**2
         zaehler2 = b**6 - 3 * b**4 * a**2
         nenner2 = (a**2 - b**2)**3 * R
         result = zaehler1 / nenner1 - zaehler2 / nenner2
         return result
-    
+
     def _equal_gamma(self, distances, a1):
-        term1 = 1 / distances
-        term2 = 11 * a1 / 16
-        term3 = 3 * a1**2 * distances / 16
-        term4 = a1**3 * distances**2 / 48
+        """
+        Numerisch STABILE Implementierung für den Fall gleicher Parameter.
+        Vermeidet den katastrophalen Genauigkeitsverlust.
+        """
+        # Der Polynom-Teil OHNE den problematischen 1/R-Term
+        poly_part = (11 * a1 / 16) + (3 * a1**2 * distances / 16) + (a1**3 * distances**2 / 48)
 
-        poly = term1 + term2 + term3 + term4
+        # Der (1/R - exp(-aR)/R) Teil wird jetzt stabil berechnet.
+        # Die Funktion torch.expm1(x) berechnet präzise (exp(x) - 1) für kleines x.
+        # (1 - exp(-aR))/R  ==>  -expm1(-aR)/R
+        stable_term_1_over_R = -torch.expm1(-a1 * distances) / distances
+        
+        # Der zweite Teil der Formel
+        exp_term = torch.exp(-a1 * distances) * poly_part
+        
+        # Das stabile Endergebnis
+        return stable_term_1_over_R - exp_term
 
-        exp = torch.exp(-a1 * distances)
-        results = 1 / distances - exp * poly
-        return results
-    
     def _unequal_gamma(self, distances, a1, a2):
+        """
+        Implementierung für ungleiche Parameter.
+        Diese Methode profitiert vom Epsilon-Trick in der forward-Methode.
+        """
         exp1 = torch.exp(-a1 * distances)
         exp2 = torch.exp(-a2 * distances)
         term1 = 1 / distances
         term2 = exp1 * self._Gamma(a1, a2, distances)
         term3 = exp2 * self._Gamma(a2, a1, distances)
-        results = term1 - term2 - term3
+        return term1 - term2 - term3
 
-        return results
+    def forward(self, distances: Tensor) -> Tensor:
+        """Haupt-Berechnungsfunktion mit Stabilitäts-Fixes."""
+        results = torch.zeros_like(distances)
+        c = self.coefficients
+        z1, z2, a1, a2 = c[0], c[1], c[2], c[3]
+        mask = distances < self.cutoff
 
-def pairwise_repulsive_updated(Geometry, alpha, Z, Repulsive, cutoff):
+        # Epsilon, um die _unequal_gamma-Methode bei kleinen Abständen abzusichern
+        epsilon = 1e-7
+        stable_distances = distances[mask] + epsilon
+
+        if torch.abs(a1 - a2) < 1e-6:
+            # Hier verwenden wir die neue, stabile _equal_gamma-Methode.
+            # Wir übergeben die originalen, nicht-stabilisierten distances,
+            # da die Methode nun von sich aus stabil ist.
+            results[mask] = self._equal_gamma(distances[mask], a1)
+        else:
+            # Hier verwenden wir die stabilisierten Abstände für den
+            # numerisch heikleren Fall.
+            results[mask] = self._unequal_gamma(stable_distances, a1, a2)
+
+        return results * z1 * z2
+
+def pairwise_repulsive(Geometry, alpha, Z, Repulsive, cutoff):
     """
     Provides the input for PairwiseRepulsiveEnergyFeed.
 
