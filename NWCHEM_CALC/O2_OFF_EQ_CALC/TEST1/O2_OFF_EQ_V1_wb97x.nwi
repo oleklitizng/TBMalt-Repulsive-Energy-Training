@@ -1,0 +1,26 @@
+title "O2 wb97x/6-31G* Energy Calculation Test"
+
+permanent_dir .
+scratch_dir .
+
+start O2
+
+geometry units angstrom nocenter noautosym noautoz
+ O 0.0 0.0 0.567663371562958
+ O 0.0 0.0 -0.567663371562958
+end
+
+basis noprint
+ O library "6-31G*"
+end
+
+dft
+  xc wb97x
+  mult 1
+  convergence energy 1e-7
+  convergence density 1e-7
+  direct
+  print low
+end
+
+task dft energy

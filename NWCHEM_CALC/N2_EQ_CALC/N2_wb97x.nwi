@@ -1,0 +1,25 @@
+title "H2 wb97x/6-31G* Optimization Test"
+
+permanent_dir .
+scratch_dir .
+
+start H2
+
+geometry units angstrom nocenter noautosym noautoz
+ N 0.0 0.0 0.0
+ N 1.0 0.0 0.0
+end
+
+basis noprint
+ N library 6-31G*
+end
+
+dft
+  xc wb97x   # Using the keyword from the documentation
+  mult 1
+  convergence density 1e-8
+  direct
+  print low
+end
+
+task dft optimize

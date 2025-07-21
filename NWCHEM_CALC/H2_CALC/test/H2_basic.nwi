@@ -1,0 +1,25 @@
+title "H2"
+
+permanent_dir . #/tmp
+
+scratch_dir . #/tmp
+
+start H2
+
+geometry units angstrom nocenter noautosym noautoz
+H 0.0 0.0 0.0
+H 1.0 0.0 0.0
+end
+
+basis noprint
+   H library 3-21G
+end
+
+
+title molopt
+dft
+  xc B3LYP
+  mult 1
+end
+
+task dft optimize
