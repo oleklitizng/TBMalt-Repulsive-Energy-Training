@@ -214,46 +214,51 @@ class DFTBGammaRepulsive(Feed):
 
         return results
 
-def pairwise_repulsive(Geometry, alpha, Z, Repulsive, cutoff):
+def pairwise_repulsive_updated(Geometry, alpha, Z, Repulsive, cutoff):
     """
-    Delivers input for PairwiseRepulsiveEnergyFeed
+    Provides the input for PairwiseRepulsiveEnergyFeed.
+
+    - For xTBRepulsive, 5 coefficients are passed: [Z1, Z2, a1, a2, kb]
+    - For PTBPRepulsive & DFTBGammaRepulsive, 4 coefficients are passed: [Z1, Z2, a1, a2]
 
     Arguments:
-        Geometry: Geometry of a system in the tbmalt notation
-        alpha: Dictionary contaning element specific repulsion parameters
-                (with atomic number as key)
-        Z: Dictionary contaning element specific effective charge
-                (with atomic number as key)
-        Repulsive: Type of Repulsive to be used. It works for the following
-                    options:
-            - xTBRepulsive
-            - PTBPRepulsive
+        Geometry: Geometry of a system in tbmalt notation.
+        alpha: Dictionary containing element-specific repulsion parameters.
+        Z: Dictionary containing element-specific effective nuclear charges.
+        Repulsive: The repulsion class to be used (e.g., xTBRepulsive).
+        cutoff: Dictionary with the cutoff radii for each atom pair.
 
     Returns:
-        A torch `ModuleDict` of pair-wise distance dependent
-        repulsive feeds, keyed by strings representing tuples 
-        of the form `"(z₁, z₂)"`, where `z₁` & `z₂` are the 
-        atomic numbers of the associated element pair (with `z₁ ≤ z₂`).
-        This can be used as input for the PairwiseRepulsiveEnergyFeed class.
+        A torch `ModuleDict` of pairwise, distance-dependent repulsive feeds.
     """
     Dict = ModuleDict({})
     for species_pair, _, _ in atomic_pair_distances(
         Geometry, True, True):
-        cond1 = species_pair[0].item() <= 2
-        cond2 = species_pair[1].item() <= 2
-        if cond1 and cond2:
-            kb = 1
-        else:
-            kb = 1.5
-        Dict[str((species_pair[0].item(), species_pair[1].item()))
-             ] = Repulsive([Z[species_pair[0].item()],
-                            Z[species_pair[1].item()],
-                            alpha[species_pair[0].item()],
-                            alpha[species_pair[1].item()],
-                            kb], 
-                            cutoff[str((species_pair[0].item(),
-                                         species_pair[1].item()))
-             ])
+
+        z1_num = species_pair[0].item()
+        z2_num = species_pair[1].item()
+        pair_key = str((z1_num, z2_num))
+
+        # Base coefficients used by all classes
+        coefficients = [
+            Z[z1_num],
+            Z[z2_num],
+            alpha[z1_num],
+            alpha[z2_num]
+        ]
+
+        # Add the specific parameter 'kb' only for the xTBRepulsive class
+        if Repulsive is xTBRepulsive:
+            cond1 = z1_num <= 2
+            cond2 = z2_num <= 2
+            kb = 1.0 if cond1 and cond2 else 1.5
+            coefficients.append(kb)
+
+        # The class is now instantiated with the correct number of parameters
+        Dict[pair_key] = Repulsive(
+            coefficients=coefficients,
+            cutoff=cutoff[pair_key]
+        )
     return Dict
 
 
