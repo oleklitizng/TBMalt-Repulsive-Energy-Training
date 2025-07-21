@@ -11,7 +11,7 @@ from collections import Counter
 # =============================================================================
 
 # Quelldateien und Zieldatei anpassen
-SOURCE_FILES = ['../ani_gdb_s02.h5', '../ani_gdb_s03.h5']
+SOURCE_FILES = ['/ani_gdb_s02.h5', '/ani_gdb_s03.h5']
 OUTPUT_FILE = 'ani_kfold_dataset_with_formation_energies.h5'
 K_FOLDS = 5
 MAX_CONFORMATIONS = 200
@@ -23,7 +23,7 @@ ALLOWED_MOLECULES = [
     'HNO2', 'H2O3', 'C2H6O', 'C2H7N', 'C2H6O', 'C3H6', 'C2H4O', 'CO2', 'C2H3N', 'CH4N2'
 ]
 
-# Chemische Potenziale der reinen Elemente (Referenzenergien pro Atom in eV)
+# Chemische Potenziale der reinen Elemente (Referenzenergien pro Atom in Hartree)
 CHEMICAL_POTENTIALS = {
     "H": -1.139861178799 / 2,
     "O": -150.109707300186 / 2,
