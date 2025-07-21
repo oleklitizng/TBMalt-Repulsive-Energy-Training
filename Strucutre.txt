@@ -1,0 +1,842 @@
+Struktur der Datei: ani_s02_s03_5-fold_cv_dataset.h5
+==============================
+  - [Gruppe] iteration_0
+      - [Gruppe] test
+          - [Gruppe] gdb11_s02_gdb11_s02-12
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-4
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-10
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-16
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-18
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-19
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+      - [Gruppe] training
+          - [Gruppe] gdb11_s02_gdb11_s02-0
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-1
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-10
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-2
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-3
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-5
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-6
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-7
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-9
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-0
+              - [Dataset] coordinates (Shape: (200, 11, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (11,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-1
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-12
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-13
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-14
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-15
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-17
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-2
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-3
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-4
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-5
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-6
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-7
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-9
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+  - [Gruppe] iteration_1
+      - [Gruppe] test
+          - [Gruppe] gdb11_s02_gdb11_s02-1
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-3
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-7
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-9
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-0
+              - [Dataset] coordinates (Shape: (200, 11, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (11,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-1
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+      - [Gruppe] training
+          - [Gruppe] gdb11_s02_gdb11_s02-0
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-10
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-12
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-2
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-4
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-5
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-6
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-10
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-12
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-13
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-14
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-15
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-16
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-17
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-18
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-19
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-2
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-3
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-4
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-5
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-6
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-7
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-9
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+  - [Gruppe] iteration_2
+      - [Gruppe] test
+          - [Gruppe] gdb11_s02_gdb11_s02-0
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-5
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-3
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-4
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-5
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-6
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+      - [Gruppe] training
+          - [Gruppe] gdb11_s02_gdb11_s02-1
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-10
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-12
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-2
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-3
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-4
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-6
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-7
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-9
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-0
+              - [Dataset] coordinates (Shape: (200, 11, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (11,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-1
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-10
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-12
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-13
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-14
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-15
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-16
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-17
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-18
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-19
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-2
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-7
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-9
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+  - [Gruppe] iteration_3
+      - [Gruppe] test
+          - [Gruppe] gdb11_s02_gdb11_s02-10
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-2
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-13
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-2
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-9
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+      - [Gruppe] training
+          - [Gruppe] gdb11_s02_gdb11_s02-0
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-1
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-12
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-3
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-4
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-5
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-6
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-7
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-9
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-0
+              - [Dataset] coordinates (Shape: (200, 11, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (11,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-1
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-10
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-12
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-14
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-15
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-16
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-17
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-18
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-19
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-3
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-4
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-5
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-6
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-7
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+  - [Gruppe] iteration_4
+      - [Gruppe] test
+          - [Gruppe] gdb11_s02_gdb11_s02-6
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-12
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-14
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-15
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-17
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-7
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+      - [Gruppe] training
+          - [Gruppe] gdb11_s02_gdb11_s02-0
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-1
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-10
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-12
+              - [Dataset] coordinates (Shape: (200, 3, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (3,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-2
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-3
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-4
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-5
+              - [Dataset] coordinates (Shape: (200, 2, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (2,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-7
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s02_gdb11_s02-9
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-0
+              - [Dataset] coordinates (Shape: (200, 11, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (11,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-1
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-10
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-11
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-13
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-16
+              - [Dataset] coordinates (Shape: (200, 8, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (8,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-18
+              - [Dataset] coordinates (Shape: (200, 4, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (4,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-19
+              - [Dataset] coordinates (Shape: (200, 5, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (5,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-2
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-3
+              - [Dataset] coordinates (Shape: (200, 10, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (10,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-4
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-5
+              - [Dataset] coordinates (Shape: (200, 9, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (9,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-6
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-8
+              - [Dataset] coordinates (Shape: (200, 6, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (6,), Dtype: |S1)
+          - [Gruppe] gdb11_s03_gdb11_s03-9
+              - [Dataset] coordinates (Shape: (200, 7, 3), Dtype: float64)
+              - [Dataset] energies (Shape: (200,), Dtype: float64)
+              - [Dataset] smiles (Shape: (), Dtype: object)
+              - [Dataset] species (Shape: (7,), Dtype: |S1)
