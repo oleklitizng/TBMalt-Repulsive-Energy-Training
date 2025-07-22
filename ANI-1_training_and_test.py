@@ -223,7 +223,9 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
         
     ref_geometries = {
         'H': Geometry(torch.tensor([1, 1]), torch.tensor([[0.1288, 0., 0.], [0.8712, 0., 0.]], dtype=torch.float64), units='a'),
-        'O': Geometry(torch.tensor([8, 8]), torch.tensor([[-0.1016, 0.0, 0.0], [1.1016, 0.0, 0.0]], dtype=torch.float64), units='a'),
+        'O': Geometry(torch.tensor([8, 8]), torch.tensor([
+            [-0.10164345, 0.00000000, 0.00000000],
+            [1.10164345, -0.00000000, -0.00000000]], dtype=torch.float64), units='a'),
         'N': Geometry(torch.tensor([7, 7]), torch.tensor([[-0.0510, 0., 0.], [1.0510, 0., 0.]], dtype=torch.float64), units='a'),
         'C': Geometry(torch.full((60,), 6), torch.load('c60_coords.pt').to(torch.float64), units='a')}
     ref_orbs = {
