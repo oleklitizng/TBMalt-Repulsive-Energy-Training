@@ -295,8 +295,7 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
         loss = mse_loss(pred_energies, train_targets_flat)
         loss.backward(); optimizer.step(); loss_history.append(loss.item())
         
-        if (epoch + 1) % 10 == 0 or epoch == 0: # Log every 10 epochs and the first one
-            logging.info(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
+        logging.info(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
 
     plot_loss_vs_epochs(loss_history, filename=os.path.join(
         RESULTS_DIR, f'loss_history_{method_name}_iter_{cv_iteration_index}.png'))
