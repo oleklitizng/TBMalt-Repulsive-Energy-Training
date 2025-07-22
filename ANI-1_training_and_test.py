@@ -273,7 +273,7 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
         logging.info("-> Using specialized starting parameters and learning rate for Gamma method.")
         alpha = {spec: Parameter(Tensor([0.26]), requires_grad=True) for spec in SPECIES}
         Z = {spec: Parameter(Tensor([0.5]), requires_grad=True) for spec in SPECIES}
-        current_lr = 0.001
+        current_lr = 0.005
     else:
         logging.info("-> Using default starting parameters.")
         alpha = {spec: Parameter(Tensor([1.0]), requires_grad=True) for spec in SPECIES}
