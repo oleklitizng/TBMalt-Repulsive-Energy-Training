@@ -3,9 +3,11 @@
 Final adapted script for training and evaluating three different
 repulsion potentials (xTB, PTBP, Gamma) using 5-fold cross-validation.
 Includes robust error handling, method-specific start parameters, and geometry logging.
+Output is now logged to 'out.log'.
 """
 import os
 import pickle
+import logging
 from collections import Counter
 from typing import List, Dict, Type
 from itertools import combinations_with_replacement
@@ -37,11 +39,21 @@ torch.set_default_dtype(torch.float64)
 Tensor = torch.Tensor
 DEVICE = torch.device('cpu')
 
+# --- Logging Setup ---
+# Configure logging to write to 'out.log'
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("out.log", mode='w'), # 'w' for overwrite, 'a' for append
+        logging.StreamHandler()  # Keep printing to console as well
+    ]
+)
+
 # --- File Paths ---
 DATASET_PATH = 'ani_kfold_dataset_with_formation_energies.h5'
 SKF_FILE = 'mio.h5'
 RESULTS_DIR = 'results'
-LOG_FILE = os.path.join(RESULTS_DIR, 'convergence_errors.log')
 os.makedirs(RESULTS_DIR, exist_ok=True) # Create folder for results
 
 # --- Model Parameters ---
@@ -61,20 +73,19 @@ DEFAULT_LEARNING_RATE = 0.01
 
 def log_convergence_error(molecule: str, conf_index: int, method: str, cv_iter: int, geometry: Geometry):
     """Logs a convergence error, including geometry, to the central log file."""
-    with open(LOG_FILE, 'a') as f:
-        f.write(f"Convergence Error: Method={method}, CV_Iter={cv_iter}, Molecule={molecule}, Conformation_Index={conf_index}\n")
-        coords_str = str(geometry.positions.tolist())
-        f.write(f"  Geometry (Angstrom):\n  {coords_str}\n")
-        f.write("-" * 25 + "\n")
+    logging.warning(f"Convergence Error: Method={method}, CV_Iter={cv_iter}, Molecule={molecule}, Conformation_Index={conf_index}")
+    coords_str = str(geometry.positions.tolist())
+    logging.warning(f"  Geometry (Angstrom):\n  {coords_str}")
+
 
 def load_data_from_cv_iteration(file_path: str, iteration_num: int, dataset_type: str) -> tuple:
     path_in_h5 = f'iteration_{iteration_num}/{dataset_type}'
-    print(f"\n--- Loading dataset '{dataset_type}' from path: {path_in_h5} ---")
+    logging.info(f"--- Loading dataset '{dataset_type}' from path: {path_in_h5} ---")
     all_molecule_names, all_species, all_coordinates, all_formation_energies = [], [], [], []
     try:
         with h5py.File(file_path, 'r') as f:
             if path_in_h5 not in f:
-                print(f"Error: Path '{path_in_h5}' not found in HDF5 file.")
+                logging.error(f"Error: Path '{path_in_h5}' not found in HDF5 file.")
                 return [], [], [], []
             data_group = f[path_in_h5]
             for molecule_name, molecule_group in data_group.items():
@@ -85,9 +96,9 @@ def load_data_from_cv_iteration(file_path: str, iteration_num: int, dataset_type
                     all_coordinates.append(molecule_group['coordinates'][()])
                     all_formation_energies.append(molecule_group['formation_energies'][()])
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}")
         return [], [], [], []
-    print(f"Successfully loaded {len(all_molecule_names)} molecules.")
+    logging.info(f"Successfully loaded {len(all_molecule_names)} molecules.")
     return all_molecule_names, all_species, all_coordinates, all_formation_energies
 
 
@@ -101,10 +112,10 @@ def load_or_calculate_dftb_energies(
     if os.path.exists(cache_file):
         with open(cache_file, 'rb') as f: data = pickle.load(f)
         if data.get('status') == 'complete':
-            print(f"\nLoading final DFTB results for training set from '{cache_file}'.")
+            logging.info(f"Loading final DFTB results for training set from '{cache_file}'.")
             return data['total_energies'], data['geometries'], data['target_energies']
 
-    print("\nStarting computationally intensive DFTB energy calculation for the training set.")
+    logging.info("Starting computationally intensive DFTB energy calculation for the training set.")
     all_total_energies, all_geometries, all_target_energies, start_index = [], [], [], 0
     
     if os.path.exists(cache_file):
@@ -122,7 +133,7 @@ def load_or_calculate_dftb_energies(
     calculator = Dftb2(h_feed, s_feed, o_feed, u_feed)
 
     for i in range(start_index, len(molecule_names)):
-        print(f"--- Processing training molecule {i+1}/{len(molecule_names)}: {molecule_names[i]} ---")
+        logging.info(f"--- Processing training molecule {i+1}/{len(molecule_names)}: {molecule_names[i]} ---")
         for j, single_conformation_coords in enumerate(coords_list[i]):
             geometry = Geometry(
                 torch.tensor(atomic_numbers_list[i], device=DEVICE, dtype=torch.long),
@@ -135,7 +146,7 @@ def load_or_calculate_dftb_energies(
                 all_target_energies.append(target_energies_list[i][j])
             except ConvergenceError:
                 log_convergence_error(molecule_names[i], j, 'dftb-baseline', cv_iter, geometry)
-                print(f"    -> WARNING: Convergence error for {molecule_names[i]}, conformation {j+1}. Skipping.")
+                logging.warning(f"    -> WARNING: Convergence error for {molecule_names[i]}, conformation {j+1}. Skipping.")
 
         with open(cache_file, 'wb') as f:
             pickle.dump({'status': 'in_progress', 'last_index': i,
@@ -144,7 +155,7 @@ def load_or_calculate_dftb_energies(
     with open(cache_file, 'wb') as f:
         pickle.dump({'status': 'complete', 'total_energies': all_total_energies, 'geometries': all_geometries,
                      'target_energies': all_target_energies}, f)
-    print("\nAll DFTB calculations for the training set completed successfully.")
+    logging.info("All DFTB calculations for the training set completed successfully.")
     return all_total_energies, all_geometries, all_target_energies
 
 
@@ -175,7 +186,7 @@ def plot_loss_vs_epochs(loss_history: List[float], filename: str):
     plt.xlabel('Epoch'); plt.ylabel('Loss (log scale)'); plt.title('Training Loss over Epochs')
     plt.grid(True, which="both", ls="--"); plt.legend(); plt.yscale('log'); plt.tight_layout()
     plt.savefig(filename); plt.close()
-    print(f"\nLoss history saved to '{filename}'")
+    logging.info(f"Loss history saved to '{filename}'")
 
 
 def plot_test_results(target: Tensor, predicted: Tensor, labels: List[str], filename: str):
@@ -197,7 +208,7 @@ def plot_test_results(target: Tensor, predicted: Tensor, labels: List[str], file
     plt.grid(True, linestyle='--', alpha=0.6); plt.gca().set_aspect('equal', adjustable='box')
     plt.legend(title="Molecules", bbox_to_anchor=(1.04, 1), loc="upper left")
     plt.tight_layout(rect=[0, 0, 0.85, 1]); plt.savefig(filename); plt.close()
-    print(f"Test prediction plot saved to '{filename}'")
+    logging.info(f"Test prediction plot saved to '{filename}'")
 
 
 # =============================================================================
@@ -205,7 +216,7 @@ def plot_test_results(target: Tensor, predicted: Tensor, labels: List[str], file
 # =============================================================================
 
 def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str):
-    print(f"\n--- A. DATA PREPARATION for {method_name}, Iteration {cv_iteration_index} ---")
+    logging.info(f"--- A. DATA PREPARATION for {method_name}, Iteration {cv_iteration_index} ---")
     train_names, train_species, train_coords, train_energies_list = load_data_from_cv_iteration(
         DATASET_PATH, cv_iteration_index, 'training')
     if not train_names: return
@@ -217,9 +228,9 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
     train_elec_energies_flat, train_geometries_flat, train_targets_filtered = load_or_calculate_dftb_energies(
         train_names, train_species, train_coords, train_energies_list, cache_file, cv_iteration_index)
 
-    print("\n--- Preparing reference molecules for chemical potentials ---")
+    logging.info("--- Preparing reference molecules for chemical potentials ---")
     if not os.path.exists('c60_coords.pt'):
-        print("ERROR: 'c60_coords.pt' not found."); return
+        logging.error("ERROR: 'c60_coords.pt' not found."); return
         
     ref_geometries = {
         'H': Geometry(torch.tensor([1, 1]), torch.tensor([[0.1288, 0., 0.], [0.8712, 0., 0.]], dtype=torch.float64), units='a'),
@@ -249,22 +260,22 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
                 'n_atoms': len(geom.atomic_numbers)
             }
         except ConvergenceError:
-            print(f"\nFATAL ERROR: DFTB calculation for reference molecule '{symbol}' failed to converge.")
-            print("The script cannot continue without all chemical potentials. Aborting this run.")
+            logging.critical(f"FATAL ERROR: DFTB calculation for reference molecule '{symbol}' failed to converge.")
+            logging.critical("The script cannot continue without all chemical potentials. Aborting this run.")
             return
 
     all_pairs = combinations_with_replacement(SPECIES, 2)
     cutoff_dict = {str(tuple(sorted(pair))): Tensor([5.0]) for pair in all_pairs}
 
-    print(f"\n--- B. MODEL TRAINING ({method_name}, Iteration {cv_iteration_index}) ---")
+    logging.info(f"--- B. MODEL TRAINING ({method_name}, Iteration {cv_iteration_index}) ---")
     
     if method_name == 'Gamma':
-        print("-> Using specialized starting parameters and learning rate for Gamma method.")
+        logging.info("-> Using specialized starting parameters and learning rate for Gamma method.")
         alpha = {spec: Parameter(Tensor([0.26]), requires_grad=True) for spec in SPECIES}
         Z = {spec: Parameter(Tensor([0.5]), requires_grad=True) for spec in SPECIES}
         current_lr = 0.001
     else:
-        print("-> Using default starting parameters.")
+        logging.info("-> Using default starting parameters.")
         alpha = {spec: Parameter(Tensor([1.0]), requires_grad=True) for spec in SPECIES}
         Z = {spec: Parameter(Tensor([float(spec)]), requires_grad=True) for spec in SPECIES}
         current_lr = DEFAULT_LEARNING_RATE
@@ -284,12 +295,13 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
         loss = mse_loss(pred_energies, train_targets_flat)
         loss.backward(); optimizer.step(); loss_history.append(loss.item())
         
-        print(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
+        if (epoch + 1) % 10 == 0 or epoch == 0: # Log every 10 epochs and the first one
+            logging.info(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
 
     plot_loss_vs_epochs(loss_history, filename=os.path.join(
         RESULTS_DIR, f'loss_history_{method_name}_iter_{cv_iteration_index}.png'))
 
-    print(f"\n--- C. MODEL EVALUATION ({method_name}, Iteration {cv_iteration_index}) ---")
+    logging.info(f"--- C. MODEL EVALUATION ({method_name}, Iteration {cv_iteration_index}) ---")
     with torch.no_grad():
         test_geometries, test_elec_energies, successful_indices = [], [], []
         dftb_test = Dftb2(h_feed, s_feed, o_feed, u_feed)
@@ -304,11 +316,11 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
                     succ_indices_mol.append(j)
                 except ConvergenceError:
                     log_convergence_error(test_names[i], j, method_name, cv_iteration_index, geom)
-                    print(f"    -> WARNING: Convergence error for {test_names[i]}, conformation {j+1}. Skipping.")
+                    logging.warning(f"    -> WARNING: Convergence error for {test_names[i]}, conformation {j+1}. Skipping.")
             successful_indices.append(succ_indices_mol)
         
         if not test_geometries:
-             print("\nNo successful calculations in the test set. Aborting."); return
+             logging.warning("No successful calculations in the test set. Aborting."); return
 
         final_chem_pots = get_chemical_potentials(ref_data, alpha, Z, repulsive_class, cutoff_dict)
         test_predicted = calculate_formation_energies(
@@ -317,7 +329,7 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
         test_labels = [test_names[i] for i, idxs in enumerate(successful_indices) for _ in idxs]
         
         rmse = torch.sqrt(mse_loss(test_predicted, test_target))
-        print(f"\nRMSE on Test Set: {rmse.item():.6f} Hartree ({rmse.item() * 627.5:.2f} kcal/mol)")
+        logging.info(f"RMSE on Test Set: {rmse.item():.6f} Hartree ({rmse.item() * 627.5:.2f} kcal/mol)")
         
         plot_test_results(test_target, test_predicted, test_labels,
                           filename=os.path.join(RESULTS_DIR, f'predictions_{method_name}_iter_{cv_iteration_index}.png'))
@@ -336,6 +348,6 @@ if __name__ == "__main__":
     
     for name, method_class in repulsive_methods.items():
         for i in range(5):
-            print(f"\n{'='*70}\n   STARTING: Method={name}, CV Iteration={i}\n{'='*70}\n")
+            logging.info(f"\n{'='*70}\n   STARTING: Method={name}, CV Iteration={i}\n{'='*70}")
             main(cv_iteration_index=i, repulsive_class=method_class, method_name=name)
-            print(f"\n{'='*70}\n   FINISHED: Method={name}, CV Iteration={i}\n{'='*70}\n")
+            logging.info(f"\n{'='*70}\n   FINISHED: Method={name}, CV Iteration={i}\n{'='*70}")
