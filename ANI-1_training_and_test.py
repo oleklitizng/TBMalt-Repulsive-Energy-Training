@@ -130,7 +130,7 @@ def load_or_calculate_dftb_energies(
     s_feed = SkFeed.from_database(SKF_FILE, SPECIES, 'overlap', device=DEVICE)
     o_feed = SkfOccupationFeed.from_database(SKF_FILE, SPECIES, device=DEVICE)
     u_feed = HubbardFeed.from_database(SKF_FILE, SPECIES, device=DEVICE)
-    calculator = Dftb2(h_feed, s_feed, o_feed, u_feed)
+    calculator = Dftb2(h_feed, s_feed, o_feed, u_feed, filling_scheme='fermi', filling_temp=0.001)
 
     for i in range(start_index, len(molecule_names)):
         logging.info(f"--- Processing training molecule {i+1}/{len(molecule_names)}: {molecule_names[i]} ---")
@@ -248,7 +248,7 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
 
     h_feed=SkFeed.from_database(SKF_FILE,SPECIES,'hamiltonian');s_feed=SkFeed.from_database(SKF_FILE,SPECIES,'overlap')
     o_feed=SkfOccupationFeed.from_database(SKF_FILE,SPECIES);u_feed=HubbardFeed.from_database(SKF_FILE,SPECIES)
-    ref_calculator = Dftb2(h_feed, s_feed, o_feed, u_feed)
+    ref_calculator = Dftb2(h_feed, s_feed, o_feed, u_feed, filling_scheme='fermi', filling_temp=0.001)
     
     ref_data = {}
     for symbol, geom, orbs in zip(ref_geometries.keys(), ref_geometries.values(), ref_orbs.values()):
@@ -304,7 +304,10 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
     logging.info(f"--- C. MODEL EVALUATION ({method_name}, Iteration {cv_iteration_index}) ---")
     with torch.no_grad():
         test_geometries, test_elec_energies, successful_indices = [], [], []
-        dftb_test = Dftb2(h_feed, s_feed, o_feed, u_feed)
+        dftb_test = calculator = Dftb2(
+            h_feed, s_feed, o_feed, u_feed,
+            filling_scheme='fermi', filling_temp=0.001
+        )
         for i in range(len(test_names)):
             succ_indices_mol = []
             for j, coords in enumerate(test_coords[i]):
