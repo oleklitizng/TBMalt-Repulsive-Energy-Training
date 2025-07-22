@@ -283,8 +283,8 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
             chem_pots, alpha, Z, repulsive_class, cutoff_dict)
         loss = mse_loss(pred_energies, train_targets_flat)
         loss.backward(); optimizer.step(); loss_history.append(loss.item())
-        if (epoch + 1) % 10 == 0:
-            print(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
+        
+        print(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
 
     plot_loss_vs_epochs(loss_history, filename=os.path.join(
         RESULTS_DIR, f'loss_history_{method_name}_iter_{cv_iteration_index}.png'))
