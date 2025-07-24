@@ -296,6 +296,16 @@ def main(cv_iteration_index: int, repulsive_class: Type[Feed], method_name: str)
         loss.backward(); optimizer.step(); loss_history.append(loss.item())
         
         logging.info(f"Epoch {epoch+1}/{NUMBER_OF_EPOCHS} | Loss: {loss.item():.8f}")
+    alpha_str = ", ".join([f"{key}: {value:.6f}" for key, value in alpha.items()])
+    z_str = ", ".join([f"{key}: {value}" for key, value in Z.items()])
+
+    log_message = (
+        "Final Trained Parameters:\n"
+        f"  - Alpha: {{ {alpha_str} }}\n"
+        f"  - Z:     {{ {z_str} }}"
+    )
+
+    logging.info(log_message)
 
     plot_loss_vs_epochs(loss_history, filename=os.path.join(
         RESULTS_DIR, f'loss_history_{method_name}_iter_{cv_iteration_index}.png'))
