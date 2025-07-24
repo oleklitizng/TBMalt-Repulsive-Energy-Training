@@ -136,6 +136,10 @@ class PTBPRepulsive(Feed):
 class DFTBGammaRepulsive(Feed):
     """Repulsive in form of the DFTB-Gamma.
 
+    The repulsive energy is derived from the overlap integral. This implementation
+    has been modified to exclude the leading '1/R' term from the standard
+    DFTB gamma function, as per user specification.
+
     Arguments:
         coefficients: A list containing the essential parameters:
             - c[0]: Z_A_eff (Effective nuclear charge of atom A)
@@ -146,7 +150,7 @@ class DFTBGammaRepulsive(Feed):
             is considered to be zero.
     """
 
-    def __init__(self, coefficients: torch.nn.Parameter, cutoff: Tensor):
+    def __init__(self, coefficients: Parameter, cutoff: Tensor):
         super().__init__()
         self.coefficients = coefficients
         self.cutoff = cutoff
@@ -161,40 +165,39 @@ class DFTBGammaRepulsive(Feed):
 
     def _equal_gamma(self, distances, a1):
         """
-        Numerically stable implementation for the case of equal parameters (a1 == a2).
-        This avoids catastrophic loss of precision at small distances.
+        Calculates the repulsive term for equal parameters (a1 == a2),
+        omitting the leading '1/R' term as requested.
+        
+        This now implements: -e^(-τR) * (1/R + 11τ/16 + 3τ²R/16 + τ³R²/48)
         """
-        # Polynomial part without the problematic 1/R term
-        poly_part = (11 * a1 / 16) + (3 * a1**2 * distances / 16) + (a1**3 * distances**2 / 48)
-
-        # The (1/R - exp(-aR)/R) part is calculated stably using torch.expm1
-        # which accurately computes (exp(x) - 1) for small x.
-        # (1 - exp(-aR))/R is equivalent to -expm1(-aR)/R
-        stable_term_1_over_R = -torch.expm1(-a1 * distances) / distances
+        # This is the part inside the parentheses in the original formula
+        inner_term = (1 / distances) + (11 * a1 / 16) + (3 * a1**2 * distances / 16) + (a1**3 * distances**2 / 48)
         
-        # Second part of the formula
-        exp_term = torch.exp(-a1 * distances) * poly_part
+        # Calculate the exponential part and multiply by the inner term
+        exp_term = torch.exp(-a1 * distances) * inner_term
         
-        # Final stable result
-        return stable_term_1_over_R - exp_term
+        # Return only the negative exponential term
+        return exp_term
 
     def _unequal_gamma(self, distances, a1, a2):
         """
-        Standard implementation for the case of unequal parameters (a1 != a2).
+        Calculates the repulsive term for unequal parameters (a1 != a2),
+        omitting the leading '1/R' term as requested.
+        
+        This now implements: -e^(-τₐR)Γ(τₐ,τᵦ,R) - e^(-τᵦR)Γ(τᵦ,τₐ,R)
         """
         exp1 = torch.exp(-a1 * distances)
         exp2 = torch.exp(-a2 * distances)
-        term1 = 1 / distances
+
+        # Calculate the two Gamma terms
         term2 = exp1 * self._Gamma(a1, a2, distances)
         term3 = exp2 * self._Gamma(a2, a1, distances)
-        return term1 - term2 - term3
+
+        # The initial "1 / distances" term is removed.
+        return term2 - term3
 
     def forward(self, distances: Tensor) -> Tensor:
         """Evaluate the repulsive interaction at the specified distance(s).
-
-        This method dynamically selects the appropriate calculation pathway based
-        on whether the atomic parameters `a1` and `a2` are equal, ensuring
-        numerical stability and correctness.
 
         Arguments:
             distances: A tensor of distances at which the repulsive term
@@ -213,10 +216,8 @@ class DFTBGammaRepulsive(Feed):
 
         # A small tolerance for floating-point comparison
         if torch.abs(a1 - a2) < 1e-6:
-            # Use the numerically stable function for homonuclear pairs
             results[mask] = self._equal_gamma(distances[mask], a1)
         else:
-            # Use the standard function for heteronuclear pairs
             results[mask] = self._unequal_gamma(distances[mask], a1, a2)
 
         # Scale the result by the product of the effective nuclear charges
