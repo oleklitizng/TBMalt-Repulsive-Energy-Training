@@ -21,8 +21,8 @@ from tbmalt.common.batch import pack, prepeat_interleave, bT, bT2
 from tbmalt.common.maths.interpolation import PolyInterpU, BicubInterpSpl
 from tbmalt.common.maths.interpolation import CubicSpline
 from tbmalt.common import unique
-from tbmalt.physics.dftb.feeds import PairwiseRepulsiveEnergyFeed
-
+from tbmalt.physics.dftb.feeds import PairwiseRepulsiveEnergyFeed, RepulsiveSplineFeed
+import matplotlib.pyplot as plt
 
 
 class xTBRepulsive(Feed):
@@ -270,81 +270,173 @@ def pairwise_repulsive(Geometry, alpha, Z, Repulsive, cutoff):
         )
     return Dict
 
+def parse_parameters(file_path):
+    """
+    Parses the extracted_parameters.txt file, correctly handling multiple
+    parameter sets for each model.
+    """
+    with open(file_path, 'r') as f:
+        # Clean up the content by removing source tags and newlines within dictionaries
+        content = f.read()
+        content = re.sub(r'\\s*', '', content)
+        content = re.sub(r'(:\s*{\s*[\d\s:.,\w-]+\n)\s*', r'\1', content)
+
+
+    # Split the entire content into model blocks. The model names act as delimiters.
+    # The (?=...) is a lookahead that keeps the delimiter in the next split.
+    model_texts = re.split(r'\n(?=PTBP|GAMMA)', content)
+
+    data = {}
+    for model_text in model_texts:
+        if not model_text.strip():
+            continue
+
+        # The model name is the first word of the block
+        model_name = model_text.strip().split()[0]
+        data[model_name] = {'Alpha': [], 'Z': []}
+
+        # Split the model's text into individual parameter sets using '--'
+        parameter_sets = model_text.split('--')
+
+        for param_set_text in parameter_sets:
+            # Now, find the single Alpha and Z dict in this smaller text block
+            alpha_match = re.search(r'Alpha:\s*({[^}]+})', param_set_text)
+            z_match = re.search(r'Z:\s*({[^}]+})', param_set_text)
+
+            if alpha_match and z_match:
+                try:
+                    # Use eval to convert the string representation of the dict to a real dict
+                    alpha_dict_str = alpha_match.group(1).replace('\n', '')
+                    z_dict_str = z_match.group(1).replace('\n', '')
+                    
+                    alpha_dict = eval(alpha_dict_str)
+                    z_dict = eval(z_dict_str)
+
+                    data[model_name]['Alpha'].append(alpha_dict)
+                    data[model_name]['Z'].append(z_dict)
+                except (SyntaxError, NameError) as e:
+                    print(f"Could not parse a dictionary in {model_name}: {e}")
+    
+    return data
+
+
+def plot_repulsive_feeds(parameters, spline_feed_instance, atom_pair=(1, 8), cutoff=5.0, param_index=0):
+    """
+    Stellt die abstoßende Energie gegen die Entfernung dar und verwendet
+    dabei die exakte RepulsiveSplineFeed-Klasse.
+    """
+    plt.figure(figsize=(10, 6))
+    distances = torch.linspace(0.1, cutoff, 500)
+
+    # Die Modelle, die wir vergleichen wollen
+    model_names = ['XTB', 'PTBP', 'GAMMA', 'Spline']
+    
+    # Label für die Legende für die analytischen Modelle
+    param_set_label = f"(Set {param_index})"
+
+    for model_name in model_names:
+        # --- Spezielle Behandlung für das Spline-Modell ---
+        if model_name == 'Spline':
+            if spline_feed_instance is not None:
+                # Überprüfen, ob Daten für dieses Paar im Spline-Feed vorhanden sind
+                pair_frozenset = frozenset(atom_pair)
+                if pair_frozenset not in spline_feed_instance.spline_data:
+                    print(f"Spline-Daten für Atompaar {atom_pair} nicht gefunden. Überspringe.")
+                    continue
+                
+                # Berechne die Energien, indem die _repulsive_calc-Methode für jeden Abstand aufgerufen wird
+                spline_energies = [spline_feed_instance._repulsive_calc(r, atom_pair[0], atom_pair[1]) for r in distances]
+                spline_energies_tensor = torch.tensor(spline_energies)
+                
+                plt.plot(distances.numpy(), spline_energies_tensor.detach().numpy(), label='Spline (from mio.h5)')
+            continue # Weiter mit dem nächsten Modell
+
+        # --- Bestehende Logik für die anderen Modelle ---
+        if parameters and model_name in parameters:
+            if param_index >= len(parameters[model_name]['Alpha']):
+                print(f"Index {param_index} liegt außerhalb des Bereichs für {model_name}. Überspringe.")
+                continue
+
+            alpha_params = parameters[model_name]['Alpha'][param_index]
+            z_params = parameters[model_name]['Z'][param_index]
+            z1_num, z2_num = atom_pair
+
+            if z1_num not in alpha_params or z2_num not in alpha_params:
+                print(f"Atompaar {atom_pair} in Parametern für {model_name} nicht gefunden. Überspringe.")
+                continue
+            
+            # Die Instanziierung der analytischen Modelle bleibt gleich
+            repulsive_class = {'XTB': xTBRepulsive, 'PTBP': PTBPRepulsive, 'GAMMA': DFTBGammaRepulsive}[model_name]
+            a1 = torch.tensor([alpha_params[z1_num]])
+            a2 = torch.tensor([alpha_params[z2_num]])
+            z1 = torch.tensor([z_params[z1_num]])
+            z2 = torch.tensor([z_params[z2_num]])
+            
+            coefficients = [z1, z2, a1, a2]
+            if model_name == 'XTB':
+                cond1 = z1_num <= 2
+                cond2 = z2_num <= 2
+                kb = 1.0 if cond1 and cond2 else 1.5
+                coefficients.append(torch.tensor([kb]))
+            
+            model_instance = repulsive_class(coefficients=coefficients, cutoff=cutoff)
+            energies = model_instance.forward(distances)
+            plt.plot(distances.numpy(), energies.detach().numpy(), label=f'{model_name} {param_set_label}')
+
+    plt.xlabel('Distance (Angstrom)')
+    plt.ylabel('Repulsive Energy (Hartree)')
+    plt.title(f'Repulsive Feeds for Atom Pair {atom_pair} - Parameter Set {param_index}')
+    plt.legend()
+    plt.grid(True)
+    plt.ylim(-0.1, 1)
+    
+    filename = f'repulsive_feeds_plot_set_{param_index}_{atom_pair[0]}-{atom_pair[1]}.png'
+    plt.savefig(filename)
+    plt.close()
+    print(f"Plot saved as {filename}")
 
 if __name__ == '__main__':
+    from itertools import combinations_with_replacement
+    import os
 
-    alpha = {
-        1: Parameter(Tensor([2.0]),requires_grad = True),
-        8: Parameter(Tensor([2.0]),requires_grad = True)
-    }
+    # Laden der Parameter für die analytischen Modelle
+    parameters = parse_parameters('results/extracted_parameters.txt')
 
-    Z = {
-        1: Parameter(Tensor([1.0]),requires_grad = True),
-        8: Parameter(Tensor([8.0]),requires_grad = True)
-    }
+    # Definieren der Atome, die uns interessieren
+    atomic_numbers = [1, 6, 7, 8]
 
-    cutoff = {}
+    # Erstellen EINER Instanz des Spline-Feeds für alle relevanten Atomsorten
+    spline_feed_instance = None
+    spline_file = 'mio.h5'
+    if os.path.exists(spline_file):
+        try:
+            # Annahme: RepulsiveSplineFeed und seine Abhängigkeiten (Skf, Feed, etc.)
+            # sind aus Ihrer tbmalt-Bibliothek importierbar.
+            print(f"Lade Spline-Daten aus {spline_file}...")
+            spline_feed_instance = RepulsiveSplineFeed.from_database(
+                path=spline_file, species=atomic_numbers)
+        except Exception as e:
+            print(f"Fehler beim Laden der Spline-Daten aus {spline_file}: {e}")
+    else:
+        print(f"Warnung: Spline-Datei '{spline_file}' nicht gefunden. Spline-Modell wird übersprungen.")
+
+
+    # Erstellen aller einzigartigen Atompaare
+    all_atom_pairs = list(combinations_with_replacement(atomic_numbers, 2))
     
-    H2O_geo = Geometry(torch.tensor([8, 1, 1]), 
-               torch.tensor([[0.0, -1.0, 0.0],
-                             [0.0, 0.0, 0.78306400000],
-                             [0.0, 0.0, -0.78306400000]], requires_grad=False),
-               units='angstrom'
-               )
+    num_param_sets = 0
+    if parameters:
+        first_model = next(iter(parameters))
+        num_param_sets = len(parameters[first_model]['Alpha'])
+
+    if num_param_sets > 0:
+        print(f"\nBeginne mit der Erstellung von Plots für {len(all_atom_pairs)} Atompaare...")
+        
+        for pair in all_atom_pairs:
+            # Für die analytischen Modelle durch alle Parametersätze loopen
+            for index in range(num_param_sets):
+                print(f"--> Erstelle Plot für Paar {pair} mit Parametersatz {index + 1}...")
+                # Die Instanz des Spline-Feeds bei jedem Aufruf übergeben
+                plot_repulsive_feeds(parameters, spline_feed_instance, atom_pair=pair, param_index=index)
     
-    for species_pair, _, _ in atomic_pair_distances(
-        H2O_geo, True, True):
-        cutoff[str((species_pair[0].item(), species_pair[1].item()))
-               ]= Tensor([5.0])
-
-    xTB_pair_repulsive = pairwise_repulsive(H2O_geo, alpha, Z, xTBRepulsive, cutoff)
-
-    xTB_total_repulsive = PairwiseRepulsiveEnergyFeed(xTB_pair_repulsive)
-
-    print(xTB_total_repulsive.forward(H2O_geo))
-
-    #PTBP_pair_repulsive = pairwise_repulsive(H2O_geo, alpha, Z, PTBPRepulsive)
-
-    #PTBP_total_repulsive = PairwiseRepulsiveEnergyFeed(PTBP_pair_repulsive)
-    
-    #print(PTBP_total_repulsive.forward(H2O_geo))
-
-    """
-    Gamma = DFTBGammaRepulsive([Parameter(Tensor([0.2236])),
-                                Parameter(Tensor([0.2236])),
-                                Parameter(Tensor([0.2580])),
-                                Parameter(Tensor([0.2580]))], 
-                                60.0)
-    xTB = xTBRepulsive([Parameter(Tensor([0.2722])),
-                                Parameter(Tensor([0.2722])),
-                                Parameter(Tensor([1.5193])),
-                                Parameter(Tensor([1.5193])), 
-                                1.0], 
-                                60.0)
-    PTBP = PTBPRepulsive([Parameter(Tensor([0.6246])),
-                                Parameter(Tensor([0.6246])),
-                                Parameter(Tensor([0.5649])),
-                                Parameter(Tensor([0.5649]))], 
-                                60.0)
-    
-    r = torch.arange(1, 10, 0.1)
-    
-    a = Gamma.forward(Tensor(r))
-    b = xTB.forward(Tensor(r))
-    c = PTBP.forward(Tensor(r))
-
-    import matplotlib.pyplot as plt
-    import numpy
-    fig, ax = plt.subplots()
-    ax.plot(r.numpy(), a.detach().numpy(), 'r', label = 'Gamma')
-    ax.plot(r.numpy(), b.detach().numpy(), 'b', label = 'xTB')
-    ax.plot(r.numpy(), c.detach().numpy(), 'g', label = 'PTBP')
-    ax.set_xlabel('distance [bohr]')
-    ax.set_ylabel('repulsive energy [Ha]')
-    ax.set_title('H-H repulsive optimized for a small batch of molecules')
-
-    ax.legend()
-
-    plt.show()
-    """
-    
+    print("\nAlle Plots wurden erfolgreich erstellt.")
