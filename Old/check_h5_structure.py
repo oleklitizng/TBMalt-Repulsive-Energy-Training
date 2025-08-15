@@ -1,7 +1,7 @@
 import h5py
 import os
 
-H5_FILE = '../processed_molecules_max200_with_species.h5'
+H5_FILE = 'ani_kfold_dataset_with_formation_energies.h5'
 
 def print_hdf5_structure(group, prefix=''):
     """
