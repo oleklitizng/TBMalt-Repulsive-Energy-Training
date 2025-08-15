@@ -24,12 +24,12 @@ from tbmalt.physics.dftb import Dftb2
 from tbmalt.physics.dftb.feeds import (
     SkFeed, SkfOccupationFeed, HubbardFeed, PairwiseRepulsiveEnergyFeed
 )
+from tbmalt.ml import Feed
 from tbmalt.ml.loss_function import mse_loss
 from tbmalt.common.exceptions import ConvergenceError
 
-# Import the repulsion classes and the updated pairwise_repulsive function
 from new_feeds_simon import (
-    PTBPRepulsive, xTBRepulsive, DFTBGammaRepulsive, Feed, pairwise_repulsive
+    PTBPRepulsive, xTBRepulsive, DFTBGammaRepulsive, pairwise_repulsive
 )
 
 # =============================================================================
