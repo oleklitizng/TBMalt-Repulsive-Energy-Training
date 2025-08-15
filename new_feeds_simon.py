@@ -2,6 +2,7 @@ from __future__ import annotations
 import warnings
 import re
 import numpy as np
+import os
 from numpy import ndarray as Array
 from itertools import combinations_with_replacement
 from typing import List, Literal, Optional, Dict, Tuple, Union, Type
@@ -21,10 +22,14 @@ from tbmalt.common.batch import pack, prepeat_interleave, bT, bT2
 from tbmalt.common.maths.interpolation import PolyInterpU, BicubInterpSpl
 from tbmalt.common.maths.interpolation import CubicSpline
 from tbmalt.common import unique
-from tbmalt.physics.dftb.feeds import PairwiseRepulsiveEnergyFeed, RepulsiveSplineFeed
+from tbmalt.physics.dftb.feeds import PairwiseRepulsiveEnergyFeed, DftbpRepulsiveSpline
 import matplotlib.pyplot as plt
 
 
+torch.set_default_dtype(torch.float64)
+
+# Deine Klassen xTBRepulsive, PTBPRepulsive, DFTBGammaRepulsive bleiben hier unverändert.
+# ... (Ich lasse sie hier zur Übersichtlichkeit weg, sie sind aber im finalen Code enthalten)
 class xTBRepulsive(Feed):
      
     """Repulsive in form of the xTB-Repulsive.
@@ -54,7 +59,7 @@ class xTBRepulsive(Feed):
     """
 
     def __init__(
-            self, coefficients: Parameter, cutoff: Tensor):
+            self, coefficients: List[Tensor], cutoff: Tensor): # Korrigiert: erwarte eine Liste von Tensoren
 
         super().__init__()
         self.coefficients = coefficients
@@ -103,7 +108,7 @@ class PTBPRepulsive(Feed):
     """
 
     def __init__(
-            self, coefficients: Parameter, cutoff: Tensor):
+            self, coefficients: List[Tensor], cutoff: Tensor): # Korrigiert
 
         super().__init__()
         self.coefficients = coefficients
@@ -150,7 +155,7 @@ class DFTBGammaRepulsive(Feed):
             is considered to be zero.
     """
 
-    def __init__(self, coefficients: Parameter, cutoff: Tensor):
+    def __init__(self, coefficients: List[Tensor], cutoff: Tensor): # Korrigiert
         super().__init__()
         self.coefficients = coefficients
         self.cutoff = cutoff
@@ -223,52 +228,52 @@ class DFTBGammaRepulsive(Feed):
         # Scale the result by the product of the effective nuclear charges
         return results * z1 * z2
 
-def pairwise_repulsive(Geometry, alpha, Z, Repulsive, cutoff):
+# ####################################################################
+# --- NEUE HILFSFUNKTION ---
+# Diese Funktion bereitet das Input-Dictionary für PairwiseRepulsiveEnergyFeed vor.
+# ####################################################################
+
+def pairwise_repulsive(geometry: Geometry, alpha: dict, z: dict, repulsive_class: Type[Feed], cutoff: dict) -> ModuleDict:
     """
-    Provides the input for PairwiseRepulsiveEnergyFeed.
-
-    - For xTBRepulsive, 5 coefficients are passed: [Z1, Z2, a1, a2, kb]
-    - For PTBPRepulsive & DFTBGammaRepulsive, 4 coefficients are passed: [Z1, Z2, a1, a2]
-
-    Arguments:
-        Geometry: Geometry of a system in tbmalt notation.
-        alpha: Dictionary containing element-specific repulsion parameters.
-        Z: Dictionary containing element-specific effective nuclear charges.
-        Repulsive: The repulsion class to be used (e.g., xTBRepulsive).
-        cutoff: Dictionary with the cutoff radii for each atom pair.
-
-    Returns:
-        A torch `ModuleDict` of pairwise, distance-dependent repulsive feeds.
+    Erstellt ein ModuleDict mit paarweisen abstoßenden Feeds für eine bestimmte Geometrie.
+    Diese Version kann sowohl mit einfachen Zahlen (floats) als auch mit
+    bestehenden Tensoren (torch.nn.Parameter) umgehen.
     """
-    Dict = ModuleDict({})
-    for species_pair, _, _ in atomic_pair_distances(
-        Geometry, True, True):
+    feeds_dict = ModuleDict({})
+    for species_pair, _, _ in atomic_pair_distances(geometry, True, True):
+        z1_num, z2_num = species_pair[0].item(), species_pair[1].item()
+        pair_key = str(tuple(sorted((z1_num, z2_num))))
 
-        z1_num = species_pair[0].item()
-        z2_num = species_pair[1].item()
-        pair_key = str((z1_num, z2_num))
+        # =======================================================================
+        # KORRIGIERTER ABSCHNITT
+        # =======================================================================
+        # Wandle die Parameter NUR DANN in einen Tensor um, wenn sie es nicht schon sind.
+        # Das macht die Funktion sowohl für das Training als auch für die Analyse kompatibel.
+        
+        # Sicherstellen, dass die Werte als Tensoren vorliegen
+        z1_val = z[z1_num]
+        z2_val = z[z2_num]
+        a1_val = alpha[z1_num]
+        a2_val = alpha[z2_num]
 
-        # Base coefficients used by all classes
         coefficients = [
-            Z[z1_num],
-            Z[z2_num],
-            alpha[z1_num],
-            alpha[z2_num]
+            z1_val if torch.is_tensor(z1_val) else torch.tensor(z1_val, dtype=torch.float64),
+            z2_val if torch.is_tensor(z2_val) else torch.tensor(z2_val, dtype=torch.float64),
+            a1_val if torch.is_tensor(a1_val) else torch.tensor(a1_val, dtype=torch.float64),
+            a2_val if torch.is_tensor(a2_val) else torch.tensor(a2_val, dtype=torch.float64)
         ]
+        # =======================================================================
 
-        # Add the specific parameter 'kb' only for the xTBRepulsive class
-        if Repulsive is xTBRepulsive:
-            cond1 = z1_num <= 2
-            cond2 = z2_num <= 2
+        if repulsive_class is xTBRepulsive:
+            cond1, cond2 = z1_num <= 2, z2_num <= 2
             kb = 1.0 if cond1 and cond2 else 1.5
-            coefficients.append(kb)
+            coefficients.append(torch.tensor(kb, dtype=torch.float64))
 
-        # The class is now instantiated with the correct number of parameters
-        Dict[pair_key] = Repulsive(
+        feeds_dict[pair_key] = repulsive_class(
             coefficients=coefficients,
             cutoff=cutoff[pair_key]
         )
-    return Dict
+    return feeds_dict
 
 def parse_parameters(file_path):
     """
@@ -276,38 +281,34 @@ def parse_parameters(file_path):
     parameter sets for each model.
     """
     with open(file_path, 'r') as f:
-        # Clean up the content by removing source tags and newlines within dictionaries
         content = f.read()
-        content = re.sub(r'\\s*', '', content)
-        content = re.sub(r'(:\s*{\s*[\d\s:.,\w-]+\n)\s*', r'\1', content)
 
-
-    # Split the entire content into model blocks. The model names act as delimiters.
-    # The (?=...) is a lookahead that keeps the delimiter in the next split.
-    model_texts = re.split(r'\n(?=PTBP|GAMMA)', content)
+    # Split the entire content into model blocks.
+    model_texts = re.split(r'\n(?=PTBP|GAMMA|XTB)', content)
 
     data = {}
     for model_text in model_texts:
         if not model_text.strip():
             continue
 
-        # The model name is the first word of the block
-        model_name = model_text.strip().split()[0]
-        data[model_name] = {'Alpha': [], 'Z': []}
+        model_name_match = re.match(r'^(XTB|PTBP|GAMMA)', model_text.strip())
+        if not model_name_match:
+            continue
+        model_name = model_name_match.group(1)
+        
+        if model_name not in data:
+            data[model_name] = {'Alpha': [], 'Z': []}
 
-        # Split the model's text into individual parameter sets using '--'
         parameter_sets = model_text.split('--')
 
         for param_set_text in parameter_sets:
-            # Now, find the single Alpha and Z dict in this smaller text block
             alpha_match = re.search(r'Alpha:\s*({[^}]+})', param_set_text)
             z_match = re.search(r'Z:\s*({[^}]+})', param_set_text)
 
             if alpha_match and z_match:
                 try:
-                    # Use eval to convert the string representation of the dict to a real dict
-                    alpha_dict_str = alpha_match.group(1).replace('\n', '')
-                    z_dict_str = z_match.group(1).replace('\n', '')
+                    alpha_dict_str = alpha_match.group(1).replace('\n', '').replace(' ', '')
+                    z_dict_str = z_match.group(1).replace('\n', '').replace(' ', '')
                     
                     alpha_dict = eval(alpha_dict_str)
                     z_dict = eval(z_dict_str)
@@ -322,39 +323,28 @@ def parse_parameters(file_path):
 
 def plot_repulsive_feeds(parameters, spline_feed_instance, atom_pair=(1, 8), cutoff=5.0, param_index=0):
     """
-    Stellt die abstoßende Energie gegen die Entfernung dar und verwendet
-    dabei die exakte RepulsiveSplineFeed-Klasse.
+    Stellt die abstoßende Energie gegen die Entfernung dar.
     """
     plt.figure(figsize=(10, 6))
-    distances = torch.linspace(0.1, cutoff, 500)
-
-    # Die Modelle, die wir vergleichen wollen
-    model_names = ['XTB', 'PTBP', 'GAMMA', 'Spline']
     
-    # Label für die Legende für die analytischen Modelle
+    # Standard-Startdistanz ist 1.0 Å
+    start_distance = 1.0
+    # Sonderfall für H-O (1-8) Paare
+    if tuple(sorted(atom_pair)) == (1, 8) or tuple(sorted(atom_pair)) == (1,6) or tuple(sorted(atom_pair)) == (1,7):
+        start_distance = 0.5
+
+    distances_angstrom = torch.linspace(start_distance, cutoff, 500)
+
+    ANGSTROM_TO_BOHR = 1.8897259886
+    distances_bohr = distances_angstrom * ANGSTROM_TO_BOHR
+
+    model_map = {'XTB': xTBRepulsive, 'PTBP': PTBPRepulsive, 'GAMMA': DFTBGammaRepulsive}
     param_set_label = f"(Set {param_index})"
-
-    for model_name in model_names:
-        # --- Spezielle Behandlung für das Spline-Modell ---
-        if model_name == 'Spline':
-            if spline_feed_instance is not None:
-                # Überprüfen, ob Daten für dieses Paar im Spline-Feed vorhanden sind
-                pair_frozenset = frozenset(atom_pair)
-                if pair_frozenset not in spline_feed_instance.spline_data:
-                    print(f"Spline-Daten für Atompaar {atom_pair} nicht gefunden. Überspringe.")
-                    continue
-                
-                # Berechne die Energien, indem die _repulsive_calc-Methode für jeden Abstand aufgerufen wird
-                spline_energies = [spline_feed_instance._repulsive_calc(r, atom_pair[0], atom_pair[1]) for r in distances]
-                spline_energies_tensor = torch.tensor(spline_energies)
-                
-                plt.plot(distances.numpy(), spline_energies_tensor.detach().numpy(), label='Spline (from mio.h5)')
-            continue # Weiter mit dem nächsten Modell
-
-        # --- Bestehende Logik für die anderen Modelle ---
+    
+    # Plot für analytische Modelle
+    for model_name, repulsive_class in model_map.items():
         if parameters and model_name in parameters:
             if param_index >= len(parameters[model_name]['Alpha']):
-                print(f"Index {param_index} liegt außerhalb des Bereichs für {model_name}. Überspringe.")
                 continue
 
             alpha_params = parameters[model_name]['Alpha'][param_index]
@@ -362,81 +352,81 @@ def plot_repulsive_feeds(parameters, spline_feed_instance, atom_pair=(1, 8), cut
             z1_num, z2_num = atom_pair
 
             if z1_num not in alpha_params or z2_num not in alpha_params:
-                print(f"Atompaar {atom_pair} in Parametern für {model_name} nicht gefunden. Überspringe.")
                 continue
             
-            # Die Instanziierung der analytischen Modelle bleibt gleich
-            repulsive_class = {'XTB': xTBRepulsive, 'PTBP': PTBPRepulsive, 'GAMMA': DFTBGammaRepulsive}[model_name]
-            a1 = torch.tensor([alpha_params[z1_num]])
-            a2 = torch.tensor([alpha_params[z2_num]])
-            z1 = torch.tensor([z_params[z1_num]])
-            z2 = torch.tensor([z_params[z2_num]])
-            
-            coefficients = [z1, z2, a1, a2]
+            # Koeffizienten-Setup
+            coefficients = [
+                torch.tensor(z_params[z1_num]),
+                torch.tensor(z_params[z2_num]),
+                torch.tensor(alpha_params[z1_num]),
+                torch.tensor(alpha_params[z2_num])
+            ]
             if model_name == 'XTB':
-                cond1 = z1_num <= 2
-                cond2 = z2_num <= 2
+                cond1 = z1_num <= 2; cond2 = z2_num <= 2
                 kb = 1.0 if cond1 and cond2 else 1.5
-                coefficients.append(torch.tensor([kb]))
-            
-            model_instance = repulsive_class(coefficients=coefficients, cutoff=cutoff)
-            energies = model_instance.forward(distances)
-            plt.plot(distances.numpy(), energies.detach().numpy(), label=f'{model_name} {param_set_label}')
+                coefficients.append(torch.tensor(kb))
+
+            model_instance = repulsive_class(coefficients=coefficients, cutoff=torch.tensor(20.0))
+            energies = model_instance.forward(distances_bohr)
+            plt.plot(distances_angstrom.numpy(), energies.detach().numpy(), label=f'{model_name} {param_set_label}')
+
+    # Plot für das Spline-Modell
+    if spline_feed_instance:
+        pair_key = str(tuple(sorted(atom_pair)))
+        if pair_key in spline_feed_instance.repulsive_feeds:
+            spline_model = spline_feed_instance.repulsive_feeds[pair_key]
+            spline_energies = spline_model(distances_bohr)
+            plt.plot(distances_angstrom.numpy(), spline_energies.detach().numpy(), label='Spline (from mio.h5)', linestyle='--', color='black')
+        else:
+            print(f"Spline-Daten für Atompaar {atom_pair} nicht gefunden.")
 
     plt.xlabel('Distance (Angstrom)')
     plt.ylabel('Repulsive Energy (Hartree)')
     plt.title(f'Repulsive Feeds for Atom Pair {atom_pair} - Parameter Set {param_index}')
     plt.legend()
     plt.grid(True)
-    plt.ylim(-0.1, 1)
     
     filename = f'repulsive_feeds_plot_set_{param_index}_{atom_pair[0]}-{atom_pair[1]}.png'
     plt.savefig(filename)
     plt.close()
-    print(f"Plot saved as {filename}")
+    # print(f"Plot saved as {filename}") # Weniger Output in der Konsole
 
 if __name__ == '__main__':
-    from itertools import combinations_with_replacement
-    import os
+    
+    parameters = parse_parameters('extracted_parameters.txt')
 
-    # Laden der Parameter für die analytischen Modelle
-    parameters = parse_parameters('results/extracted_parameters.txt')
-
-    # Definieren der Atome, die uns interessieren
-    atomic_numbers = [1, 6, 7, 8]
-
-    # Erstellen EINER Instanz des Spline-Feeds für alle relevanten Atomsorten
+    print("\n" + "="*70)
+    print("--- Erstellung der Plots für Atompaare ---")
+    print("="*70)
+    
     spline_feed_instance = None
     spline_file = 'mio.h5'
     if os.path.exists(spline_file):
         try:
-            # Annahme: RepulsiveSplineFeed und seine Abhängigkeiten (Skf, Feed, etc.)
-            # sind aus Ihrer tbmalt-Bibliothek importierbar.
             print(f"Lade Spline-Daten aus {spline_file}...")
-            spline_feed_instance = RepulsiveSplineFeed.from_database(
-                path=spline_file, species=atomic_numbers)
+            # Korrekte Initialisierung des Spline-Feeds
+            spline_feed_instance = PairwiseRepulsiveEnergyFeed.from_database(
+                path=spline_file, species=[1, 6, 7, 8])
         except Exception as e:
-            print(f"Fehler beim Laden der Spline-Daten aus {spline_file}: {e}")
+            print(f"Fehler beim Laden der Spline-Daten: {e}")
     else:
-        print(f"Warnung: Spline-Datei '{spline_file}' nicht gefunden. Spline-Modell wird übersprungen.")
+        print(f"Warnung: '{spline_file}' nicht gefunden. Spline-Modell wird übersprungen.")
 
-
-    # Erstellen aller einzigartigen Atompaare
-    all_atom_pairs = list(combinations_with_replacement(atomic_numbers, 2))
+    atomic_numbers_for_plots = [1, 6, 7, 8]
+    all_atom_pairs = list(combinations_with_replacement(atomic_numbers_for_plots, 2))
     
-    num_param_sets = 0
+    num_param_sets_plot = 0
     if parameters:
         first_model = next(iter(parameters))
-        num_param_sets = len(parameters[first_model]['Alpha'])
+        num_param_sets_plot = len(parameters[first_model]['Alpha'])
 
-    if num_param_sets > 0:
+    if num_param_sets_plot > 0:
         print(f"\nBeginne mit der Erstellung von Plots für {len(all_atom_pairs)} Atompaare...")
         
         for pair in all_atom_pairs:
-            # Für die analytischen Modelle durch alle Parametersätze loopen
-            for index in range(num_param_sets):
-                print(f"--> Erstelle Plot für Paar {pair} mit Parametersatz {index + 1}...")
-                # Die Instanz des Spline-Feeds bei jedem Aufruf übergeben
+            for index in range(num_param_sets_plot):
                 plot_repulsive_feeds(parameters, spline_feed_instance, atom_pair=pair, param_index=index)
+        
+        print("\nAlle Plots wurden erfolgreich erstellt.")
     
-    print("\nAlle Plots wurden erfolgreich erstellt.")
+    print("\nAlle Operationen abgeschlossen.")
